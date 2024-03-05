@@ -1197,6 +1197,19 @@ class Spritmonitor extends utils.Adapter {
 			},
 			native: {},
 		});
+		await this.setObjectNotExistsAsync(`ACTIONS.ADD.percentage`, {
+			type: 'state',
+			common: {
+				name: 'Akkustand',
+				type: 'number',
+				def: 0,
+				role: 'state',
+				min: 0,
+				read: true,
+				write: true,
+			},
+			native: {},
+		});
 		await this.setObjectNotExistsAsync(`ACTIONS.ADD.trip`, {
 			type: 'state',
 			common: {
@@ -1533,6 +1546,7 @@ class Spritmonitor extends utils.Adapter {
 					// this.setState(`ACTIONS.ADD.tankId`, 0, true);
 					this.setState(`ACTIONS.ADD.date`, '', true);
 					this.setState(`ACTIONS.ADD.odometer`, 0, true);
+					this.setState(`ACTIONS.ADD.percentage`, 0, true);
 					this.setState(`ACTIONS.ADD.trip`, 0, true);
 					this.setState(`ACTIONS.ADD.quantity`, 0, true);
 					// this.setState(`ACTIONS.ADD.type`, 0, true);
@@ -1716,6 +1730,14 @@ class Spritmonitor extends utils.Adapter {
 							APIstring += `&odometer=${odometer.val}`;
 						} else {
 							this.log.info(`[onStateChange]: value odometer not valid. Value not added.`);
+						}
+					}
+					const akku_perc = await this.getStateAsync(`ACTIONS.ADD.percentage`);
+					if (akku_perc && akku_perc.val !== 0) {
+						if (this.numberInRange(0.1, null, akku_perc.val)) {
+							APIstring += `&percent=${akku_perc.val}`;
+						} else {
+							this.log.info(`[onStateChange]: akku_perc not valid. Value not added.`);
 						}
 					}
 					const trip = await this.getStateAsync(`ACTIONS.ADD.trip`);
